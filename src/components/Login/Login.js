@@ -1,15 +1,26 @@
-import { LockClosedIcon } from '@heroicons/react/solid'
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { LockClosedIcon } from '@heroicons/react/solid';
+import { getAuth, signOut } from "firebase/auth";
+import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
+import { useLocation, useNavigate } from 'react-router-dom';
 import app from '../../firebase.init';
-import {useSignInWithGoogle} from 'react-firebase-hooks/auth'
 
 
 const auth = getAuth(app);
 
 export default function Login() {
     const [signInWithGoogle, user] = useSignInWithGoogle(auth);
+    const location = useLocation();
+    const navigate = useNavigate();
     const logOut = () => {
         signOut(auth);
+    }
+    const from = location?.state?.from?.pathname || '/';
+
+    const handleGoolgeSignIn = () => {
+        signInWithGoogle()
+            .then(() => {
+            navigate(from, {replace:true})
+        })
     }
     return (
         <>
@@ -94,7 +105,7 @@ export default function Login() {
                             </button>
 
                             <button
-                                onClick={()=>signInWithGoogle()}
+                                onClick={handleGoolgeSignIn }
                                 type="submit"
                                 className="mt-4 group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             >
@@ -104,7 +115,7 @@ export default function Login() {
                                 Sign in with google
                             </button>
                             <button
-                                onClick={()=>logOut()}
+                                onClick={() => logOut()}
                                 type="submit"
                                 className="mt-4 group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             >
